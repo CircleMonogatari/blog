@@ -24,7 +24,7 @@ SECRET_KEY = '373cd&lmg-tn_nl-%4@smzm9(tzlc^pj1&3r!wtt^(=51ml@03'
 # SECURITY WARNING: don't run with debug turned on in production!
 DEBUG = True
 
-ALLOWED_HOSTS = []
+ALLOWED_HOSTS = ['*']
 
 # Application definition
 
@@ -35,6 +35,10 @@ INSTALLED_APPS = [
     'django.contrib.sessions',
     'django.contrib.messages',
     'django.contrib.staticfiles',
+
+    'blog_admin',
+    'blog_email',
+    'blog_swagger',
 ]
 
 MIDDLEWARE = [
@@ -77,6 +81,17 @@ DATABASES = {
     }
 }
 
+DATABASES_BK = {
+    'default': {
+        'ENGINE': 'django.db.backends.mysql',
+        'NAME': 'nld-monitor-admin',
+        'USER': 'admin',
+        'PASSWORD': 'bwsjyfzx',
+        'HOST': '192.168.0.200',
+        'PORT': '3306',
+    }
+}
+
 # Password validation
 # https://docs.djangoproject.com/en/2.2/ref/settings/#auth-password-validators
 
@@ -98,9 +113,10 @@ AUTH_PASSWORD_VALIDATORS = [
 # Internationalization
 # https://docs.djangoproject.com/en/2.2/topics/i18n/
 
-LANGUAGE_CODE = 'en-us'
 
-TIME_ZONE = 'UTC'
+LANGUAGE_CODE = 'zh-hans'
+
+TIME_ZONE = 'Asia/Shanghai'
 
 USE_I18N = True
 
