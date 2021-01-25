@@ -75,20 +75,27 @@ WSGI_APPLICATION = 'blog_object.wsgi.application'
 # Database
 # https://docs.djangoproject.com/en/2.2/ref/settings/#databases
 
+# DATABASES = {
+#     'default': {
+#         'ENGINE': 'django.db.backends.sqlite3',
+#         'NAME': os.path.join(BASE_DIR, 'db.sqlite3'),
+#     }
+# }
+
+mysqlip = os.getenv('mysqlip')
+mysqluser = os.getenv('mysqluser')
+mysqlpass = os.getenv('mysqlpass')
+if mysqlip is None:
+    exit()
+
+
 DATABASES = {
     'default': {
-        'ENGINE': 'django.db.backends.sqlite3',
-        'NAME': os.path.join(BASE_DIR, 'db.sqlite3'),
-    }
-}
-
-DATABASES_BK = {
-    'default': {
         'ENGINE': 'django.db.backends.mysql',
-        'NAME': 'nld-monitor-admin',
-        'USER': 'admin',
-        'PASSWORD': 'bwsjyfzx',
-        'HOST': '192.168.0.200',
+        'NAME': 'blog',
+        'USER': mysqluser,
+        'PASSWORD': mysqlpass,
+        'HOST': mysqlip,
         'PORT': '3306',
     }
 }
