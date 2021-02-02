@@ -1,25 +1,377 @@
 <!DOCTYPE html>
-<html>
+<!--
+   The project use: django-simpleui
+   source code：
+   https://github.com/newpanjing/simpleui
+-->
+<html lang="zh-hans">
 <head>
-    <meta charset="UTF-8">
-    <!-- import CSS -->
-    <link rel="stylesheet" href="https://unpkg.com/element-ui/lib/theme-chalk/index.css">
+    <meta charset="UTF-8"/>
+    <meta content="webkit" name="renderer"/>
+    <meta content="IE=edge,chrome=1" http-equiv="X-UA-Compatible"/>
+    <meta content="width=device-width, initial-scale=1.0, maximum-scale=1.0, user-scalable=0" name="viewport"/>
+    <title>Django 站点管理员</title>
+    <link href="https://cdn.jsdelivr.net/npm/element-ui@2.13.2/lib/theme-chalk/index.css" rel="stylesheet"
+          type="text/css"/>
+    <link href="https://cdn.jsdelivr.net/npm/@fortawesome/fontawesome-free@5.13.0/css/all.min.css" rel="stylesheet"
+          type="text/css"/>
+    <link href="/static/admin/simpleui-x/css/index.css?_=3.2" rel="stylesheet"/>
+    <link href="/static/admin/simpleui-x/waves/waves.min.css?_=2.1" rel="stylesheet"/>
 </head>
 <body>
-         {% block content %}
-         {% endblock %}
-</body>
-<!-- import Vue before Element -->
-<script src="https://unpkg.com/vue/dist/vue.js"></script>
-<!-- import JavaScript -->
-<script src="https://unpkg.com/element-ui/lib/index.js"></script>
-<script>
-    new Vue({
-      el: '#app',
-      data: function() {
-        return { visible: false }
-      }
-    })
+<style type="text/css">
+    .el-tabs__nav .el-tabs__item:nth-child(1) .el-icon-close {
+        display: none;
+    }
+
+    * {
+        -webkit-overflow-scrolling: touch;
+    }
+
+    [v-block] {
+        display: none;
+    }
+
+
+
+</style>
+<script type="text/javascript">
+    var menus= [{
+	"name": "Blog_Admin",
+	"icon": "far fa-circle",
+	"models": [{
+		"name": "\u6211\u7684\u535a\u5ba2",
+		"icon": "far fa-circle",
+		"url": "/admin/blog_admin/blog/",
+		"addUrl": "/admin/blog_admin/blog/add/",
+		"breadcrumbs": [{
+			"name": "Blog_Admin",
+			"icon": "far fa-circle"
+		}, {
+			"name": "\u6211\u7684\u535a\u5ba2",
+			"icon": "far fa-circle"
+		}],
+		"eid": 1002
+	}, {
+		"name": "\u6587\u7ae0\u6807\u7b7e",
+		"icon": "far fa-circle",
+		"url": "/admin/blog_admin/tag/",
+		"addUrl": "/admin/blog_admin/tag/add/",
+		"breadcrumbs": [{
+			"name": "Blog_Admin",
+			"icon": "far fa-circle"
+		}, {
+			"name": "\u6587\u7ae0\u6807\u7b7e",
+			"icon": "far fa-circle"
+		}],
+		"eid": 1003
+	}, {
+		"name": "\u6587\u7ae0\u7c7b\u522b",
+		"icon": "far fa-circle",
+		"url": "/admin/blog_admin/category/",
+		"addUrl": "/admin/blog_admin/category/add/",
+		"breadcrumbs": [{
+			"name": "Blog_Admin",
+			"icon": "far fa-circle"
+		}, {
+			"name": "\u6587\u7ae0\u7c7b\u522b",
+			"icon": "far fa-circle"
+		}],
+		"eid": 1004
+	}],
+	"eid": 1001
+}, {
+	"name": "\u8ba4\u8bc1\u548c\u6388\u6743",
+	"icon": "fas fa-shield-alt",
+	"models": [{
+		"name": "\u7528\u6237",
+		"icon": "far fa-user",
+		"url": "/admin/auth/user/",
+		"addUrl": "/admin/auth/user/add/",
+		"breadcrumbs": [{
+			"name": "\u8ba4\u8bc1\u548c\u6388\u6743",
+			"icon": "fas fa-shield-alt"
+		}, {
+			"name": "\u7528\u6237",
+			"icon": "far fa-user"
+		}],
+		"eid": 1006
+	}, {
+		"name": "\u7ec4",
+		"icon": "fas fa-users-cog",
+		"url": "/admin/auth/group/",
+		"addUrl": "/admin/auth/group/add/",
+		"breadcrumbs": [{
+			"name": "\u8ba4\u8bc1\u548c\u6388\u6743",
+			"icon": "fas fa-shield-alt"
+		}, {
+			"name": "\u7ec4",
+			"icon": "fas fa-users-cog"
+		}],
+		"eid": 1007
+	}],
+	"eid": 1005
+}]
+
 
 </script>
+<div @click="mainClick($event)" id="main" v-block="">
+    <link :href="theme" rel="stylesheet" v-if="theme &amp;&amp; theme!=''"/>
+    <el-drawer :show-close="false" :visible.sync="drawer" class="lite-menus" direction="ltr" size="50%"
+               title="Django 管理">
+        <el-menu :default-active="menuActive" unique-opened="true">
+            <div :key="item" v-for="(item,i) in menus">
+                <el-menu-item :index="item.eid+''" @click="openTab(item,item.eid)" v-if="!item.models">
+                    <i :class="item.icon"></i>
+                    <span slot="title" v-text="item.name"></span>
+                </el-menu-item>
+                <el-submenu :index="item.eid+''" v-else="">
+                    <template slot="title">
+                        <i :class="item.icon"></i>
+                        <span slot="title" v-text="item.name"></span>
+                    </template>
+                    <el-menu-item-group :key="sub.name" :title="sub.name" v-for="(sub,j) in item.models">
+                        <el-menu-item :index="sub.eid+''" @click="openTab(sub,item.eid)">
+                            <i :class="sub.icon"></i>
+                            <span slot="title" v-text="sub.name"></span>
+                        </el-menu-item>
+                    </el-menu-item-group>
+                </el-submenu>
+            </div>
+        </el-menu>
+    </el-drawer>
+    <el-container :style="{height: height+'px'}">
+        <el-aside class="menu" v-if="!mobile" width="auto">
+            <div class="logo-wrap" v-if="!fold">
+                <div class="float-wrap">
+                    <div class="left">
+                        <img src="/static/logo.png"/>
+                    </div>
+                    <div class="left">
+                        <span>Django 管理</span>
+                    </div>
+                </div>
+            </div>
+            <el-menu :collapse="fold" :default-active="menuActive" unique-opened="true">
+                <div :key="item" v-for="(item,i) in menus">
+                    <el-menu-item :index="item.eid+''" @click="openTab(item,item.eid)" v-if="!item.models">
+                        <i :class="item.icon"></i>
+                        <span slot="title" v-if="menuTextShow" v-text="item.name"></span>
+                    </el-menu-item>
+                    <el-submenu :index="item.eid+''" v-else="">
+                        <template slot="title">
+                            <i :class="item.icon"></i>
+                            <span slot="title" v-if="menuTextShow" v-text="item.name"></span>
+                        </template>
+                        <el-menu-item-group :key="sub.name" :title="sub.name" v-for="(sub,j) in item.models">
+                            <el-menu-item :index="sub.eid+''" @click="openTab(sub,item.eid)">
+                                <i :class="sub.icon"></i>
+                                <span slot="title" v-text="sub.name"></span>
+                            </el-menu-item>
+                        </el-menu-item-group>
+                    </el-submenu>
+                </div>
+            </el-menu>
+        </el-aside>
+        <el-container>
+            <el-header class="navbar" style="font-size: 12px;padding: 10px;height: auto">
+                <div class="float-wrap">
+                    <div class="left">
+                        <el-button @click="foldClick()" circle="" icon="fas fa-bars"
+                                   style="margin-right: 10px;border: none" v-waves=""></el-button>
+                        <el-breadcrumb separator="/" style="display: inline-block;" v-if="!mobile">
+                            <el-breadcrumb-item>
+
+                            </el-breadcrumb-item>
+                            <el-breadcrumb-item :key="item" v-for="item in breadcrumbs">
+                                <span :class="getIcon(item.name,item.icon)"></span>
+                                <span v-text="item.name"></span>
+                            </el-breadcrumb-item>
+                        </el-breadcrumb>
+                    </div>
+                    <div class="right">
+                        <el-button @click="fontClick()" circle="" icon="fas fa-font" v-waves=""></el-button>
+                        <el-button :icon="this.zoom?'fas fa-compress-arrows-alt':'fas fa-expand-arrows-alt'"
+                                   @click="goZoom()" circle=""></el-button>
+                        <el-button @click="goIndex('None')" circle="" icon="fas fa-home" v-waves=""></el-button>
+                        <el-button @click="themeDialogVisible=true" v-waves="">
+                            <i class="fas fa-palette"></i>
+                            <span v-text="getLanuage('Change theme')"></span>
+                            <i class="el-icon-arrow-down el-icon--right"></i>
+                        </el-button>
+                        <el-dropdown>
+                            <el-button v-waves="">
+                                <i class="fas fa-user"></i> sfr
+                                <i class="el-icon-arrow-down el-icon--right"></i>
+                            </el-button>
+                            <el-dropdown-menu slot="dropdown">
+                                <el-dropdown-item @click.native="changePassword()" icon="far fa-edit" v-waves="">
+
+                                </el-dropdown-item>
+                                <el-dropdown-item @click.native="logout()" divided="" icon="el-icon-close">
+
+                                </el-dropdown-item>
+                            </el-dropdown-menu>
+                        </el-dropdown>
+                    </div>
+                </div>
+            </el-header>
+            <el-main>
+                <el-tabs :style="isResize?'height:100%':'height: calc(100% - 97px)'" @edit="handleTabsEdit"
+                         @tab-click="tabClick" editable="" type="border-card" v-model="tabModel">
+                    <el-tab-pane :closable="index!=0" :key="item.id" :label="item.name" :name="item.id" lazy="true"
+                                 v-for="(item,index) in tabs">
+                        <span @contextmenu.prevent="contextmenu(item,$event)" slot="label"> <i
+                                :class="item.loading?'el-icon-loading':item.icon"></i> <span v-text="item.name"></span> </span>
+                        <div style="height:100%" v-if="index==0">
+                            <div id="home">
+                                <el-row class="info-card">
+<!--                                    <el-col :span="18">-->
+<!--                                        <el-card class="box-card">-->
+<!--                                            <div class="clearfix" slot="header">-->
+<!--                                                <i class="fas fa-link"></i>-->
+<!--                                                <span v-text="getLanuage('Quick navigation')"></span>-->
+<!--                                            </div>-->
+<!--                                            <div class="clearfix">-->
+<!--                                                <div :key="c.name" class="quick-wrap" v-for="(c,j) in models">-->
+<!--                                                    <a @click="openTab(c,(j+1)+'')" href="javascript:;"> <span-->
+<!--                                                            :class="c.icon" class="icon"></span> <span class="card-name"-->
+<!--                                                                                                       v-text="c.name"></span>-->
+<!--                                                    </a>-->
+<!--                                                </div>-->
+<!--                                            </div>-->
+<!--                                        </el-card>-->
+<!--                                    </el-col>-->
+
+                                </el-row>
+                                <el-card class="timeline">
+                                    <div class="clearfix" slot="header">
+                                        <span>最近动作</span>
+                                        <el-button :icon="timeline?'el-icon-arrow-up':'el-icon-arrow-down'"
+                                                   @click="displayTimeline()" style="float: right; padding: 3px 0"
+                                                   type="text" v-waves=""></el-button>
+                                    </div>
+                                    <transition name="el-zoom-in-top">
+                                        <div class="block" v-if="timeline">
+                                            <el-timeline>
+                                                <!--                                                <el-timeline-item timestamp="2021年2月2日 14:28" placement="top">-->
+                                                <!--                                                    <el-card>-->
+                                                <!--                                                        <p>sfr 2021年2月2日 14:28</p>-->
+                                                <!--                                                        <h4>我的博客: 修改了 &quot;Django 视图开发&quot; - 已修改content。</h4>-->
+                                                <!--                                                    </el-card>-->
+                                                <!--                                                </el-timeline-item>-->
+                                            </el-timeline>
+                                        </div>
+                                    </transition>
+                                </el-card>
+                            </div>
+                            <el-dialog :visible.sync="upgrade.dialogVisible" title="Upgrade Simpleui" width="50%">
+                                <el-alert :title="'You can upgrade to '+upgrade.version" type="success">
+                                </el-alert>
+                                <div style="padding: 10px">
+                                    <div>
+                                        <h3> Run Command: </h3>
+                                        <el-alert title="pip install django-simpleui -U" type="info">
+                                        </el-alert>
+                                    </div>
+                                    <div>
+                                        <h3>Change logs:</h3>
+                                    </div>
+                                    <div v-text="upgrade.body"></div>
+                                </div>
+                            </el-dialog>
+                        </div>
+                        <div class="iframe-wrap" v-else="">
+                            <iframe :id="item.id" :src="item.url" @load="iframeLoad(item,$event)"></iframe>
+                            <div @dblclick="loading=false" class="loading" v-if="loading">
+                                <div class="center">
+                                    <span class="el-icon-loading"></span>
+                                    <span>loading...</span>
+                                </div>
+                            </div>
+                        </div>
+                    </el-tab-pane>
+                </el-tabs>
+            </el-main>
+        </el-container>
+    </el-container>
+    <ul :style="{position: 'absolute',top: popup.top+'px',left: popup.left+'px'}" class="el-dropdown-menu el-popper"
+        ref="popupmenu" v-if="popup.show" x-placement="top-end">
+        <li @click="item.handler(popup.tab,item)" class="el-dropdown-menu__item" tabindex="-1"
+            v-for="(item,index) in popup.menus"><i :class="item.icon"></i><span v-text="item.text"></span></li>
+    </ul>
+    <el-dialog :visible.sync="pwdDialog.show" title="修改密码">
+        <iframe :src="pwdDialog.url" frameborder="0" height="500" width="100%"></iframe>
+    </el-dialog>
+    <el-dialog :title="getLanuage('Change theme')" :visible.sync="themeDialogVisible" :width="small?'90%':'50%'">
+        <div class="change-theme clearfix">
+            <div :class="{'theme-item':true,active:themeName==item.text}" :key="item.text"
+                 :title="getLanuage(item.text)" @click="setTheme(item)" v-for="(item,i) in themes" v-waves="">
+                <div :style="{background:item.menu}" class="theme-menu">
+                    <div :style="{background: item.logo}" class="theme-logo"></div>
+                </div>
+                <div :style="{background: item.top}" class="theme-top"></div>
+            </div>
+        </div>
+    </el-dialog>
+    <el-dialog :title="getLanuage('Set font size')" :visible.sync="fontDialogVisible" :width="small?'90%':'50%'">
+        <el-slider :max="100" :min="12" @change="fontSlideChange" show-input="" v-model="fontSlider"></el-slider>
+        <div style="text-align: right;padding-top: 20px">
+            <el-button @click="reset()" type="primary" v-text="getLanuage('Reset')"></el-button>
+        </div>
+    </el-dialog>
+</div>
+<script type="text/javascript">
+
+            var home = {
+                id: '0',
+                index: '1',
+                eid: '1',
+                name: "首页",
+                icon: 'fas fa-home'
+            };
+
+        menus.unshift(home);
+        window.language = {
+            change_password: '修改密码',
+            logout: '注销',
+            yes: '是',
+            no: '否',
+            confirm: '你确定吗？'
+        }
+        window.themeUrl = '/static/admin/simpleui-x/theme/';
+        window.urls = {
+            changePassword: "/admin/password_change/",
+            logout: "/admin/logout/"
+        }
+        var lanuageCode = 'zh-hans';
+
+        function localeError(e) {
+            console.warn("Please add the zh-hans.js language file to the '/simpleui-x/theme' directory.")
+            console.log("See simpleui i18n:https://github.com/newpanjing/simpleui/blob/master/i18n.md")
+            console.log("或者加入QQ群:786576510 (Join QQ Group.)")
+
+        }
+
+
+
+</script>
+<script src="https://cdn.jsdelivr.net/npm/vue@2.6.11/dist/vue.min.js" type="text/javascript"></script>
+<script src="https://cdn.jsdelivr.net/npm/element-ui@2.13.2/lib/index.js" type="text/javascript"></script>
+<script type="text/javascript">
+        __simpleui_version = '2021.1.1';
+
+
+
+</script>
+<script src="/static/admin/simpleui-x/automatic/dicts.js?_=2021.1.1" type="text/javascript"></script>
+<script src="/static/admin/simpleui-x/automatic/segment.js?_=2021.1.1" type="text/javascript"></script>
+<script src="/static/admin/simpleui-x/locale/en-us.js?_=2021.1.1" type="text/javascript"></script>
+<script onerror="localeError()" src="/static/admin/simpleui-x/locale/zh-hans.js?_=2021.1.1"
+        type="text/javascript"></script>
+<script src="/static/admin/simpleui-x/js/cookie.js?_=2021.1.1" type="text/javascript"></script>
+<script src="/static/admin/simpleui-x/theme/theme.js?_=2021.1.1" type="text/javascript"></script>
+<script src="/static/admin/simpleui-x/waves/waves.min.js?_=2021.1.1" type="text/javascript"></script>
+<script src="/static/admin/simpleui-x/js/index.js?_=2021.1.1" type="text/javascript"></script>
+</body>
 </html>

@@ -29,6 +29,7 @@ ALLOWED_HOSTS = ['*']
 # Application definition
 
 INSTALLED_APPS = [
+    # UI
     'simpleui',
     'django.contrib.admin',
     'django.contrib.auth',
@@ -40,7 +41,10 @@ INSTALLED_APPS = [
     'blog_admin',
     'blog_email',
     'blog_swagger',
-    'pure-pagination',
+
+    'pure_pagination',  # 分页
+    'ckeditor',  # 富文本编辑器
+    'ckeditor_uploader',  # 富文本编辑器上传图片模块
 ]
 
 MIDDLEWARE = [
@@ -143,7 +147,6 @@ STATICFILES_DIRS = [
     os.path.join(BASE_DIR, "static"),
 ]
 
-
 PAGINATION_SETTINGS = {
     'PAGE_RANGE_DISPLAYED': 10,
     'MARGIN_PAGES_DISPLAYED': 2,
@@ -151,3 +154,35 @@ PAGINATION_SETTINGS = {
     'SHOW_FIRST_PAGE_WHEN_INVALID': True,
 }
 
+MEDIA_ROOT = os.path.join(BASE_DIR, 'media')
+MEDIA_URL = '/media/'
+CKEDITOR_UPLOAD_PATH = ''  # 使用fdfs分布系统
+
+
+# ckeditor
+CKEDITOR_CONFIGS = {
+    # 配置名是default时，django-ckeditor默认使用这个配置
+    'default': {
+        # 使用简体中文
+        'language': 'zh-cn',
+        # 编辑器的宽高请根据你的页面自行设置
+        # 'width': '730px',
+        'height': '350px',
+        'image_previewText': ' ',
+        # 'tabSpaces': 4,
+        # 'toolbar': 'full',  # 完整工具条
+        'toolbar': 'custom',  # 常用工具条
+        # 添加按钮在这里
+        # 'toolbar_Custom': [
+        #     ['Bold', 'Italic', 'Underline', 'Format', 'RemoveFormat'],
+        #     ['NumberedList', 'BulletedList'],
+        #     ['Blockquote', 'CodeSnippet'],
+        #     ['Image', 'Link', 'Unlink'],
+        #     ['Maximize']
+        # ],
+        # 插件
+        'extraPlugins': ','.join(['codesnippet', 'uploadimage', 'widget', 'lineutils', ]),
+    }
+}
+
+# ckeditor_uploader.fields.RichTextUploadingField 支持上传文件的富文本字段

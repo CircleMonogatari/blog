@@ -1,4 +1,5 @@
 from django.db import models
+from ckeditor_uploader.fields import RichTextUploadingField
 
 manageFlag = True
 
@@ -44,7 +45,7 @@ class Blog(models.Model):
     """
 
     title = models.CharField(verbose_name='标题', max_length=100)
-    content = models.TextField(verbose_name='正文', default='')
+    content = RichTextUploadingField(verbose_name='正文', default='')
     sys_create_time = models.DateTimeField(verbose_name='创建时间', auto_now_add=True)
     sys_update_time = models.DateTimeField(verbose_name='更新时间', auto_now=True)
     click_nums = models.IntegerField(verbose_name='点击量', default=0)
