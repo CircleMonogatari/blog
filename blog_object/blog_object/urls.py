@@ -18,7 +18,10 @@ from django.conf import settings
 from django.contrib import admin
 from django.urls import path, include
 
+from blog_admin import views
+
 urlpatterns = [
+    path('', views.IndexView.as_view(), name='index'),
     path('admin/', admin.site.urls),
     path('blog/', include('blog_admin.urls')),
 
