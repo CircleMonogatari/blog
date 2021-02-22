@@ -1,28 +1,132 @@
 <!DOCTYPE html>
 <html>
-<head>
-  <meta charset="UTF-8">
-  <!-- import CSS -->
-  <link rel="stylesheet" href="https://unpkg.com/element-ui/lib/theme-chalk/index.css">
-</head>
-<body>
-  <div id="app">
-    <el-button @click="visible = true">Button</el-button>
-    <el-dialog :visible.sync="visible" title="Hello world">
-      <p>Try Element</p>
-    </el-dialog>
-  </div>
-</body>
-  <!-- import Vue before Element -->
-  <script src="https://unpkg.com/vue/dist/vue.js"></script>
-  <!-- import JavaScript -->
-  <script src="https://unpkg.com/element-ui/lib/index.js"></script>
-  <script>
-    new Vue({
-      el: '#app',
-      data: function() {
-        return { visible: false }
-      }
-    })
-  </script>
+	<head>
+		<meta charset="UTF-8">
+		<!-- import CSS -->
+		<link rel="stylesheet" href="https://unpkg.com/element-ui/lib/theme-chalk/index.css">
+
+		<style>
+			.el-header,
+			.el-footer {
+				background-color: #B3C0D1;
+				color: #333;
+				text-align: center;
+				line-height: 60px;
+			}
+
+			.el-aside {
+				background-color: #D3DCE6;
+				color: #333;
+				text-align: center;
+				line-height: 200px;
+			}
+
+			.el-main {
+				background-color: #E9EEF3;
+				color: #333;
+				text-align: center;
+				line-height: 160px;
+			}
+
+			body>.el-container {
+				margin-bottom: 40px;
+			}
+
+			.el-container:nth-child(5) .el-aside,
+			.el-container:nth-child(6) .el-aside {
+				line-height: 260px;
+			}
+
+			.el-container:nth-child(7) .el-aside {
+				line-height: 320px;
+			}
+		</style>
+	</head>
+	<body>
+		<div id="app">
+			<el-container>
+				<!-- 菜单栏 -->
+				<el-aside width="auto%">
+					<!-- 菜单 -->
+					<el-menu>
+						<div :key="item" v-for="(item,i) in menus">
+							<!-- 判断是否是首页, 是的话就没有子选项 -->
+							<el-menu-item :index="item.eid+''" v-if="!item.models">
+								
+								<i :class="item.icon"></i>
+								<span slot="title" v-if="menuTextShow" v-text="item.name"></span>
+							</el-menu-item>
+							<el-submenu :index="item.eid+''" v-else="">
+								<template slot="title">
+									<i :class="item.icon"></i>
+									<span slot="title" v-if="menuTextShow" v-text="item.name"></span>
+								</template>
+								<el-menu-item-group :key="sub.name" :title="sub.name" v-for="(sub,j) in item.models">
+									<i :class="sub.icon"></i>
+									<span slot="title" v-text="sub.name"></span>
+								</el-menu-item-group>
+							</el-submenu>							
+						</div>
+					</el-menu>
+				</el-aside>
+				
+				<!-- 主页内容 -->
+				<el-container>
+					<el-header>Header</el-header>
+					<el-main>
+						main
+					</el-main>
+				</el-container>
+			</el-container>
+
+		</div>
+	</body>
+
+
+	<!-- import Vue before Element -->
+	<script src="https://unpkg.com/vue/dist/vue.js"></script>
+	<!-- import JavaScript -->
+	<script src="https://unpkg.com/element-ui/lib/index.js"></script>
+	<script>
+		new Vue({
+			el: '#app',
+			data: function() {
+				return {
+					visible: false,
+					menuTextShow: true,
+					menus:[
+						{
+							id:'0',
+							index:'1',
+							eid:'1',
+							name:'首页',
+							icon:'el-icon-location',
+						},
+						{
+							name:'菜单集',
+							icon:'fas fa-shield-alt',
+							models:[{
+								name:'菜单1',
+								icon:'fas fa-home',
+								url:'www.baidu.com',
+								addUrl:'www.google.com',
+								breadcrumbs:[
+									{
+										name:'菜单子1',
+										icon:'',
+									},{
+											name:'菜单子2',
+											icon:'',
+									}								
+								],
+								eid:'1002',
+							}],
+							eid:'1001',
+							
+						}
+					],
+				}
+			}
+		})
+	</script>
 </html>
