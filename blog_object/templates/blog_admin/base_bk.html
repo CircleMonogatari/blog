@@ -4,7 +4,7 @@
 		<meta charset="UTF-8">
 		<!-- import CSS -->
 		<link rel="stylesheet" href="https://unpkg.com/element-ui/lib/theme-chalk/index.css">
-
+		<script src="https://unpkg.com/axios/dist/axios.min.js"></script>
 		<style>
 			.el-header,
 			.el-footer {
@@ -52,7 +52,7 @@
 						<div :key="item" v-for="(item,i) in menus">
 							<!-- 判断是否是首页, 是的话就没有子选项 -->
 							<el-menu-item :index="item.eid+''" v-if="!item.models">
-								
+
 								<i :class="item.icon"></i>
 								<span slot="title" v-if="menuTextShow" v-text="item.name"></span>
 							</el-menu-item>
@@ -65,16 +65,18 @@
 									<i :class="sub.icon"></i>
 									<span slot="title" v-text="sub.name"></span>
 								</el-menu-item-group>
-							</el-submenu>							
+							</el-submenu>
 						</div>
 					</el-menu>
 				</el-aside>
-				
+
 				<!-- 主页内容 -->
 				<el-container>
 					<el-header>Header</el-header>
 					<el-main>
-						main
+
+						<input type="button" value="请求" id="get123" />
+						<input type="button" value="请求2" @click="qqck">
 					</el-main>
 				</el-container>
 			</el-container>
@@ -88,44 +90,47 @@
 	<!-- import JavaScript -->
 	<script src="https://unpkg.com/element-ui/lib/index.js"></script>
 	<script>
+		document.getElementById("get123").onclick = function() {
+			console.log(123)
+		}
+	</script>
+	<script>
 		new Vue({
 			el: '#app',
-			data: function() {
-				return {
-					visible: false,
-					menuTextShow: true,
-					menus:[
-						{
-							id:'0',
-							index:'1',
-							eid:'1',
-							name:'首页',
-							icon:'el-icon-location',
-						},
-						{
-							name:'菜单集',
-							icon:'fas fa-shield-alt',
-							models:[{
-								name:'菜单1',
-								icon:'fas fa-home',
-								url:'www.baidu.com',
-								addUrl:'www.google.com',
-								breadcrumbs:[
-									{
-										name:'菜单子1',
-										icon:'',
-									},{
-											name:'菜单子2',
-											icon:'',
-									}								
-								],
-								eid:'1002',
-							}],
-							eid:'1001',
-							
-						}
-					],
-				}
+			data: {
+				visible: false,
+				menuTextShow: true,
+				menus: [],
+			},
+			methods: {
+				qqck() {
+					console.log('方法2岁')
+					this.getmenu()
+				},
+				getmenu() {
+					console.log('getmenu')
+					
+					axios.get('http://127.0.0.1:8080/blog/menu').then
+					(function(response){
+						console.log(response.data);
+					},
+					function(error){
+						console.log(error);
+					})
+				},
+
+			},
+			mounted() {
+				var me = this;
+
+				console.log(this.data.menus)
+
+
+
+				console.log(me.data.menus)
+
+				console.log('123')
+
 			}
 		})
 	</script>
